@@ -5,5 +5,5 @@ import PCB from "../view/pcb";
 export default {
   Header,
   Footer,
-  PCB
+  PCB,
 }
