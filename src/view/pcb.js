@@ -8,11 +8,19 @@ const PCB = () => {
   const [process, setProcess] = useState({})
   const [processCurrent, setProcessCurrent] = useState([])
 
+  const getRandomInt = (min, max) => {
+    min = Math.ceil(min);
+    max = Math.floor(max);
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+  }
+
   const addProcess = () => {
     setProcess({
       id: processList.length,
-      name: `P ${processList.length}`,
+      name: `Process${processList.length}`,
       arrivalTime: clock,
+      priority: getRandomInt(0, 9),
+      burstTime: getRandomInt(0, 9),
       excute: 0,
       wait: 0,
       statusProcess: 'New'
@@ -69,7 +77,7 @@ const PCB = () => {
   useEffect(() => {
     setProcessList([...processList, process])
   }, [process])
-  
+
   return (
     <div >
       <div className="col-md-12">
@@ -82,7 +90,9 @@ const PCB = () => {
                   <div className="col-md-12" align="right">
                     <button className='btn btn-success btn-sm' onClick={() => addProcess()}>Add Process</button>
                     {' '}
-                    <button className='btn btn-danger btn-sm' style={{ marginRight: '5px' }}>Terminate</button>
+                    {/* <button className='btn btn-danger btn-sm'>Terminate</button>
+                    {' '} */}
+                    <button className='btn btn-danger btn-sm' onClick={() => window.location.reload()} style={{ marginRight: '5px' }}>Reset</button>
                   </div>
                 </div>
               }
@@ -90,11 +100,13 @@ const PCB = () => {
                 <Table hover>
                   <thead align="left">
                     <tr>
-                      <th>Process Name</th>
-                      <th>Arrival Time</th>
-                      <th>Execute Time</th>
-                      <th>Waitting Time</th>
-                      <th>Status Process</th>
+                      <th style={{ width: '15%' }}>Process Name</th>
+                      <th style={{ width: '13%' }}>Arrival Time</th>
+                      <th style={{ width: '13%' }}>Priority</th>
+                      <th style={{ width: '13%' }}>Burst Time</th>
+                      <th style={{ width: '13%' }}>Execute Time</th>
+                      <th style={{ width: '13%' }}>Waitting Time</th>
+                      <th style={{ width: '15%' }}>Status Process</th>
                     </tr>
                   </thead>
                   <tbody align="left">
@@ -103,6 +115,8 @@ const PCB = () => {
                         return (<tr key={idx}>
                           <td>{items.name}</td>
                           <td>{items.arrivalTime}</td>
+                          <td>{items.priority}</td>
+                          <td>{items.burstTime}</td>
                           <td>{items.excute}</td>
                           <td>{items.wait}</td>
                           {items.statusProcess === 'New' && (<td>New</td>)}
@@ -173,70 +187,29 @@ const PCB = () => {
                   </thead>
                   <tbody align="left">
                     <tr>
-                      <th scope="row">
-                        1
-                      </th>
-                      <td>
-                        Mark
-                      </td>
-                      <td>
-                        Otto
-                      </td>
-                      <td>
-                        @mdo
-                      </td>
+                      <td scope="row">Process2</td>
+                      <td>10</td>
+                      <td>0</td>
+                      <td style={{ backgroundColor: 'green' }}>Running</td>
                     </tr>
                     <tr>
-                      <th scope="row">
-                        2
-                      </th>
-                      <td>
-                        Jacob
-                      </td>
-                      <td>
-                        Thornton
-                      </td>
-                      <td>
-                        @fat
-                      </td>
+                      <td scope="row">Process3</td>
+                      <td>0</td>
+                      <td>15</td>
+                      <td style={{ backgroundColor: 'orange' }}>Waitting</td>
                     </tr>
                     <tr>
-                      <th scope="row">
-                        3
-                      </th>
-                      <td>
-                        Larry
-                      </td>
-                      <td>
-                        the Bird
-                      </td>
-                      <td>
-                        @twitter
-                      </td>
-                    </tr>
-                    <tr>
-                      <th scope="row">
-                        3
-                      </th>
-                      <td>
-                        Larry
-                      </td>
-                      <td>
-                        the Bird
-                      </td>
-                      <td>
-                        @twitter
-                      </td>
+                      <td scope="row">Process4</td>
+                      <td>0</td>
+                      <td>20</td>
+                      <td style={{ backgroundColor: 'orange' }}>Waitting</td>
                     </tr>
                   </tbody>
                 </Table>
-
               </Card>
             </div>
           </div>
-
         </Card>
-
       </div>
     </div>
   )
