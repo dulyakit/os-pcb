@@ -4,7 +4,7 @@ import React from 'react';
 const App = () => (
   <PageHeader
     className="site-page-header"
-    title="Operating System : I/O"
+    title="Priority non-preemptive scheduling"
   />
 );
 
