@@ -6,14 +6,12 @@ import Terminate from "../view/terminate";
 
 function index() {
   return (
-    <div>
+    <>
       <Header />
-      <div >
         <PCB />
         <Terminate />
-      </div>
       <Footer />
-    </div>
+    </>
   )
 }
 

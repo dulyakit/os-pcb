@@ -1,12 +1,23 @@
-import React, { useState, useEffect } from 'react'
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable array-callback-return */
+import React, { useEffect } from 'react'
 import { Card } from 'antd';
 import { Table } from 'reactstrap';
+import { useDispatch, useSelector } from 'react-redux'
+import Usb from './usb';
 
 const PCB = () => {
-  const [clock, setClock] = useState(0)
-  const [processList, setProcessList] = useState([])
-  const [process, setProcess] = useState({})
-  const [processCurrent, setProcessCurrent] = useState([])
+  const dispatch = useDispatch()
+
+  const clock = useSelector((state) => state.clock)
+  const processList = useSelector((state) => state.processList)
+  const process = useSelector((state) => state.process)
+  const processCurrent = useSelector((state) => state.processCurrent)
+
+  const setProcess = ((any) => dispatch({ type: 'set', process: any, }))
+  const setClock = ((any) => dispatch({ type: 'set', clock: any, }))
+  const setProcessList = ((any) => dispatch({ type: 'set', processList: any, }))
+  const setProcessCurrent = ((any) => dispatch({ type: 'set', processCurrent: any, }))
 
   const getRandomInt = (min, max) => {
     min = Math.ceil(min);
@@ -21,6 +32,12 @@ const PCB = () => {
       arrivalTime: clock,
       priority: getRandomInt(0, 9),
       burstTime: getRandomInt(0, 9),
+      usb: {
+        status: false,
+        statusUsb: 'Running',
+        runningTime: 0,
+        responseTime: 0,
+      },
       excute: 0,
       wait: 0,
       statusProcess: 'New'
@@ -42,8 +59,8 @@ const PCB = () => {
     let tmp;
     if (arrs.length > 1) {
       for (let i = arrs.length - 1; i >= 0; i--) {
-        tmp = arrs[i].arrivalTime;
-        if (tmp < lowest) lowest = tmp;
+        tmp = arrs[i].priority;
+        if (tmp < lowest && arrs[i].usb.status === false) lowest = tmp;
         if (tmp > highest) highest = tmp;
       }
     }
@@ -55,17 +72,29 @@ const PCB = () => {
     for (let i = 0; i < processList.length; i++) {
       if (processList[i].id) {
         tempList[i].statusProcess = tempList[i].arrivalTime > 0 ? "Ready" : "New"
-        tempList[i].statusProcess = tempList[i].arrivalTime === findNumber(processList)
-          ? "Running"
-          : tempList[i].statusProcess
+        if (tempList[i].priority === findNumber(processList)) {
+          tempList[i].statusProcess = "Running"
+        } else {
+          tempList[i].statusProcess = "Ready"
+        }
+        // tempList[i].statusProcess = tempList[i].priority === findNumber(processList)
+        //   ? "Running"
+        //   : "Ready"
+        if (tempList[i].usb.status === true) {
+          tempList[i].statusProcess = "Waiting"
+        }
         if (tempList[i].statusProcess === "Running") {
           setProcessCurrent(tempList[i].name)
           tempList[i].excute++
         } else if (tempList[i].statusProcess === "Ready") {
           tempList[i].wait++
+        } else if (tempList[i].usb.status === true) {
+          tempList[i].excute = tempList[i].excute
+          tempList[i].wait++
+          tempList[i].usb.runningTime++
+          tempList[i].usb.responseTime = tempList[i].usb.responseTime
         }
       }
-
     }
     setProcessList(tempList)
   }
@@ -90,8 +119,8 @@ const PCB = () => {
                   <div className="col-md-12" align="right">
                     <button className='btn btn-success btn-sm' onClick={() => addProcess()}>Add Process</button>
                     {' '}
-                    {/* <button className='btn btn-danger btn-sm'>Terminate</button>
-                    {' '} */}
+                    <button className='btn btn-danger btn-sm' onClick={()=> processList[2].usb.status = true}>test usb</button>
+                    {' '}
                     <button className='btn btn-danger btn-sm' onClick={() => window.location.reload()} style={{ marginRight: '5px' }}>Reset</button>
                   </div>
                 </div>
@@ -111,7 +140,7 @@ const PCB = () => {
                   </thead>
                   <tbody align="left">
                     {processList?.map((items, idx) => {
-                      if (items.id != undefined) {
+                      if (items.id !== undefined) {
                         return (<tr key={idx}>
                           <td>{items.name}</td>
                           <td>{items.arrivalTime}</td>
@@ -122,6 +151,7 @@ const PCB = () => {
                           {items.statusProcess === 'New' && (<td>New</td>)}
                           {items.statusProcess === 'Ready' && (<td style={{ backgroundColor: 'yellow' }}>Ready</td>)}
                           {items.statusProcess === 'Running' && (<td style={{ backgroundColor: 'green' }}>Running</td>)}
+                          {items.statusProcess === 'Waiting' && (<td style={{ backgroundColor: 'orange' }}>Waiting</td>)}
                         </tr>)
                       }
                     })}
@@ -136,77 +166,18 @@ const PCB = () => {
                 title={<span style={{ fontSize: '18px' }}>Controller</span>}
               >
                 <div align="left">
-                  <div>
-                    Clock : {clock}
-                  </div>
-                  <div>
-                    CPU process : {processCurrent}
-                  </div>
-                  <div>
-                    I/O process :
-                  </div>
-                  <div>
-                    AVG Waitting : 45.25
-                  </div>
-                  <div>
-                    AVG Turnaround : 66.75
-                  </div>
+                  <div>Clock : {clock}</div>
+                  <div>CPU process : {processCurrent}</div>
+                  <div>I/O process :</div>
+                  <div>AVG Waitting : 45.25</div>
+                  <div>AVG Turnaround : 66.75</div>
                 </div>
+              </Card>
 
-              </Card>
-              <Card
-                className='mt-3'
-                type="inner"
-                title={
-                  <div className='row'>
-                    <span style={{ fontSize: '18px' }}>USB Device</span>
-                    <div className="col-md-12" align="right">
-                      <button className='btn btn-success btn-sm'>Add</button>
-                      {' '}
-                      <button className='btn btn-danger btn-sm' style={{ marginRight: '5px' }}>Close</button>
-                    </div>
-                  </div>
-                }
-                style={{ height: '270px', overflow: 'scroll', overflowX: 'hidden' }}>
-                <Table align="left" hover>
-                  <thead>
-                    <tr>
-                      <th>
-                        Process Name
-                      </th>
-                      <th>
-                        Running Time
-                      </th>
-                      <th>
-                        Respond Time
-                      </th>
-                      <th>
-                        Status Process
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody align="left">
-                    <tr>
-                      <td scope="row">Process2</td>
-                      <td>10</td>
-                      <td>0</td>
-                      <td style={{ backgroundColor: 'green' }}>Running</td>
-                    </tr>
-                    <tr>
-                      <td scope="row">Process3</td>
-                      <td>0</td>
-                      <td>15</td>
-                      <td style={{ backgroundColor: 'orange' }}>Waitting</td>
-                    </tr>
-                    <tr>
-                      <td scope="row">Process4</td>
-                      <td>0</td>
-                      <td>20</td>
-                      <td style={{ backgroundColor: 'orange' }}>Waitting</td>
-                    </tr>
-                  </tbody>
-                </Table>
-              </Card>
+              {/* Usb Component  */}
+              <Usb />
+              {/* Usb Component  */}
+
             </div>
           </div>
         </Card>
