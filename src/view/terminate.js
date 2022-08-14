@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from 'react'
 import { Card } from 'antd';
 import { Table } from 'reactstrap';
+import { useDispatch, useSelector } from 'react-redux'
+import Que from './que';
 
 const Terminate = () => {
+  const processList = useSelector((state) => state.processList)
   return (
     <div >
       <div className="col-md-12">
@@ -55,57 +58,11 @@ const Terminate = () => {
 
             </div>
             <div className="col-md-3">
-              <Card
-                type="inner"
-                title={<span style={{ fontSize: '18px' }}>Ready Que</span>}
-                style={{ height: '300px', overflow: 'scroll', overflowX: 'hidden' }}>
-                <Table align="left" hover>
-                  <thead>
-                    <tr align='left'>
-                      <th >
-                        Process Name
-                      </th>
-                      <th>
-                        Arrival Time
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody align="left">
-                    <tr>
-                      <td scope="row">
-                        Process2
-                      </td>
-                      <td>
-                        10
-                      </td>
-                    </tr>
-                    <tr>
-                      <td scope="row">
-                        Process3
-                      </td>
-                      <td>
-                        13
-                      </td>
-                    </tr>
-                    <tr>
-                      <td scope="row">
-                        Process4
-                      </td>
-                      <td>
-                        20
-                      </td>
-                    </tr>
-                    <tr>
-                      <td scope="row">
-                        Process5
-                      </td>
-                      <td>
-                        24
-                      </td>
-                    </tr>
-                  </tbody>
-                </Table>
-              </Card>
+              
+              {/* Usb Component  */}
+              <Que/>
+              {/* Usb Component  */}
+
             </div>
           </div>
         </Card>
