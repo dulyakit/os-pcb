@@ -2,9 +2,9 @@ const initialState = {
   clock: 0,
   processList: [],
   process: {},
-  processCurrent: [],
-  terminateList: [],
-  test:'sldjco',
+  processCurrent: '',
+  processTerminateList: [],
+  usbCurrent: '',
 }
 
 export default initialState
