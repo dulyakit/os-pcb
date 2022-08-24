@@ -229,7 +229,7 @@ const PCB = () => {
                   </div>
                 </div>
               }
-                style={{ height: '500px', overflow: 'scroll', overflowX: 'hidden' }}>
+                style={{ height: '600px', overflow: 'scroll', overflowX: 'hidden' }}>
                 <Table hover>
                   <thead align="left">
                     <tr>

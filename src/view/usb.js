@@ -67,7 +67,7 @@ const Usb = () => {
           </div>
         </div>
       }
-      style={{ height: '270px', overflow: 'scroll', overflowX: 'hidden' }}>
+      style={{ height: '370px', overflow: 'scroll', overflowX: 'hidden' }}>
       <Table align="left" hover>
         <thead>
           <tr>
