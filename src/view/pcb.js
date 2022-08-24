@@ -1,23 +1,27 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable array-callback-return */
-import React, { useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Card } from 'antd';
 import { Table } from 'reactstrap';
+import _ from 'lodash'
 import { useDispatch, useSelector } from 'react-redux'
 import Usb from './usb';
 
 const PCB = () => {
   const dispatch = useDispatch()
-
   const clock = useSelector((state) => state.clock)
   const processList = useSelector((state) => state.processList)
   const process = useSelector((state) => state.process)
   const processCurrent = useSelector((state) => state.processCurrent)
+  const usbCurrent = useSelector((state) => state.usbCurrent)
+  const processTerminateList = useSelector((state) => state.processTerminateList)
 
   const setProcess = ((any) => dispatch({ type: 'set', process: any, }))
   const setClock = ((any) => dispatch({ type: 'set', clock: any, }))
   const setProcessList = ((any) => dispatch({ type: 'set', processList: any, }))
+  const setProcessTerminateList = ((any) => dispatch({ type: 'set', processTerminateList: any, }))
   const setProcessCurrent = ((any) => dispatch({ type: 'set', processCurrent: any, }))
+  const setUsbCurrent = ((any) => dispatch({ type: 'set', usbCurrent: any, }))
 
   const getRandomInt = (min, max) => {
     min = Math.ceil(min);
@@ -35,6 +39,7 @@ const PCB = () => {
       usb: {
         status: false,
         statusUsb: 'Running',
+        arrivalTime: 0,
         runningTime: 0,
         responseTime: 0,
       },
@@ -44,6 +49,26 @@ const PCB = () => {
     })
   }
 
+  const terminateProcess = () => {
+    // ค้นหา Object ที่มีสถานะเป็น Running และเปลี่ยนสถานะเป็น Terminate
+    let terminateProcesss = processList.filter((item) => {
+      return item.statusProcess == "Running" && { ...item, statusProcess: "Terminate" }
+    });
+
+    // กรอง Object ที่มีสถานะ Running ออกจาก processList
+    let filterArr = processList.filter((item) => {
+      return item.statusProcess != "Running" && item
+    });
+    setProcessList(filterArr);
+
+    // นำตัวแปรที่เก็บค่าที่ค้นหามาเปลี่ยน statusProcess เป็น Terminate
+    terminateProcesss[0].statusProcess = "Terminate";
+    terminateProcesss[0].turnAroundTime = terminateProcesss[0].excute + terminateProcesss[0].wait;
+    console.log("terminateProcesss", terminateProcesss);
+
+    setProcessTerminateList([...processTerminateList, ...terminateProcesss]);
+  };
+
   useEffect(() => {
     let innervalId = 0;
     setInterval(() => {
@@ -52,7 +77,26 @@ const PCB = () => {
     }, 1000);
   }, []);
 
-  const findNumber = (arr) => {
+  // ค้นหาค่า Arrival Time ที่น้อยที่สุด
+  const findNumber = (arr, priority) => {
+    let arrs = arr || [];
+    let lowest = Number.POSITIVE_INFINITY;
+    let highest = Number.NEGATIVE_INFINITY;
+    let tmp;
+    if (arrs.length > 1) {
+      for (let i = arrs.length - 1; i >= 0; i--) {
+        if (arrs[i].priority === priority) {
+          tmp = arrs[i].arrivalTime;
+          if (tmp < lowest && arrs[i].usb.status === false) lowest = tmp;
+          if (tmp > highest) highest = tmp;
+        }
+      }
+    }
+    return lowest;
+  };
+
+  // ค้นหาค่า Priority ที่น้อยที่สุด
+  const findNumberByPriority = (arr) => {
     let arrs = arr || [];
     let lowest = Number.POSITIVE_INFINITY;
     let highest = Number.NEGATIVE_INFINITY;
@@ -67,32 +111,92 @@ const PCB = () => {
     return lowest;
   };
 
-  const setStatusProcess = () => {
+  // ค้นหาค่า Arrival Time จาก USB ที่น้อยที่สุด
+  const findNumberByUsb = (arr) => {
+    let arrs = arr || [];
+    let lowest = Number.POSITIVE_INFINITY;
+    let highest = Number.NEGATIVE_INFINITY;
+    let tmp;
+    if (arrs.length > 1) {
+      for (let i = arrs.length - 1; i >= 0; i--) {
+        if (arrs[i].usb?.status === true) {
+          tmp = arrs[i].usb.arrivalTime;
+          if (tmp < lowest) lowest = tmp;
+          if (tmp > highest) highest = tmp;
+        }
+      }
+    }
+    return lowest;
+  };
+
+
+  const setStatusRunning = (data) => {
+    if (data.priority === findNumberByPriority(processList)) {
+      let temp = []
+
+      processList.forEach(element => {
+        temp.push(element.priority)
+      })
+
+      let result = new Set(temp.filter((v, i, a) => a.indexOf(v) !== i))
+
+      if (Array.from(result).length > 0) {
+        if (data.arrivalTime === findNumber(processList, data.priority)) {
+          data.statusProcess = "Running"
+        }
+
+      } else {
+        data.statusProcess = "Running"
+      }
+
+    } else {
+      data.statusProcess = "Ready"
+    }
+  }
+
+  const setStatusUsb = (data) => {
+    if (data.usb.arrivalTime === findNumberByUsb(processList)) {
+      setUsbCurrent(data.name)
+      data.usb.statusUsb = "Running"
+
+    } else {
+      data.usb.statusUsb = "Waiting"
+    }
+  }
+
+  const setStatusProcess = async () => {
     let tempList = processList
     for (let i = 0; i < processList.length; i++) {
       if (processList[i].id) {
         tempList[i].statusProcess = tempList[i].arrivalTime > 0 ? "Ready" : "New"
-        if (tempList[i].priority === findNumber(processList)) {
-          tempList[i].statusProcess = "Running"
-        } else {
-          tempList[i].statusProcess = "Ready"
-        }
-        // tempList[i].statusProcess = tempList[i].priority === findNumber(processList)
-        //   ? "Running"
-        //   : "Ready"
+
+        setStatusRunning(tempList[i])
+
         if (tempList[i].usb.status === true) {
           tempList[i].statusProcess = "Waiting"
         }
+
         if (tempList[i].statusProcess === "Running") {
           setProcessCurrent(tempList[i].name)
           tempList[i].excute++
+
         } else if (tempList[i].statusProcess === "Ready") {
           tempList[i].wait++
+
         } else if (tempList[i].usb.status === true) {
           tempList[i].excute = tempList[i].excute
           tempList[i].wait++
-          tempList[i].usb.runningTime++
-          tempList[i].usb.responseTime = tempList[i].usb.responseTime
+
+          setStatusUsb(tempList[i])
+
+          if (tempList[i].usb.statusUsb === "Running") {
+            tempList[i].usb.runningTime++
+          }
+
+          if (tempList[i].usb.statusUsb === "Waiting") {
+            tempList[i].usb.responseTime++
+          }
+
         }
       }
     }
@@ -119,9 +223,9 @@ const PCB = () => {
                   <div className="col-md-12" align="right">
                     <button className='btn btn-success btn-sm' onClick={() => addProcess()}>Add Process</button>
                     {' '}
-                    <button className='btn btn-danger btn-sm' onClick={()=> processList[2].usb.status = true}>test usb</button>
+                    <button className='btn btn-danger btn-sm' onClick={() => terminateProcess()}>Terminate</button>
                     {' '}
-                    <button className='btn btn-danger btn-sm' onClick={() => window.location.reload()} style={{ marginRight: '5px' }}>Reset</button>
+                    <button className='btn btn-info btn-sm' onClick={() => window.location.reload()} style={{ marginRight: '5px' }}>Reset</button>
                   </div>
                 </div>
               }
@@ -168,7 +272,7 @@ const PCB = () => {
                 <div align="left">
                   <div>Clock : {clock}</div>
                   <div>CPU process : {processCurrent}</div>
-                  <div>I/O process :</div>
+                  <div>I/O process : {usbCurrent}</div>
                   <div>AVG Waitting : 45.25</div>
                   <div>AVG Turnaround : 66.75</div>
                 </div>

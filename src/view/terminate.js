@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from 'react'
+import React from 'react'
 import { Card } from 'antd';
 import { Table } from 'reactstrap';
-import { useDispatch, useSelector } from 'react-redux'
+import { useSelector } from 'react-redux'
 import Que from './que';
 
 const Terminate = () => {
-  const processList = useSelector((state) => state.processList)
+  const terminateList = useSelector((state) => state.processTerminateList)
   return (
     <div >
       <div className="col-md-12">
@@ -32,36 +32,27 @@ const Terminate = () => {
                     </tr>
                   </thead>
                   <tbody align="left">
-                    <tr>
-                      <td>Process1</td>
-                      <td>1</td>
-                      <td>1</td>
-                      <td>6</td>
-                      <td>10</td>
-                      <td>0</td>
-                      <td>10</td>
-                      <td style={{backgroundColor: 'pink'}}>Terminate</td>
-                    </tr>
-                    <tr>
-                      <td>Process2</td>
-                      <td>2</td>
-                      <td>2</td>
-                      <td>4</td>
-                      <td>10</td>
-                      <td>10</td>
-                      <td>20</td>
-                      <td style={{backgroundColor: 'pink'}}>Terminate</td>
-                    </tr>
+                    {terminateList.map((items, idx) => (
+                      <tr>
+                        <td>{items.name}</td>
+                        <td>{items.arrivalTime}</td>
+                        <td>{items.priority}</td>
+                        <td>{items.burstTime}</td>
+                        <td>{items.excute}</td>
+                        <td>{items.wait}</td>
+                        <td>{items.turnAroundTime}</td>
+                        <td style={{ backgroundColor: 'pink' }}>Terminate</td>
+                      </tr>
+                    ))}
                   </tbody>
                 </Table>
               </Card>
-
             </div>
             <div className="col-md-3">
-              
-              {/* Usb Component  */}
-              <Que/>
-              {/* Usb Component  */}
+
+              {/* Que Component  */}
+              <Que />
+              {/* Que Component  */}
 
             </div>
           </div>
