@@ -52,20 +52,21 @@ const PCB = () => {
   const terminateProcess = () => {
     // ค้นหา Object ที่มีสถานะเป็น Running และเปลี่ยนสถานะเป็น Terminate
     let terminateProcesss = processList.filter((item) => {
-      return item.statusProcess == "Running" && { ...item, statusProcess: "Terminate" }
+      return item.statusProcess === "Running" && { ...item, statusProcess: "Terminate" }
     });
 
     // กรอง Object ที่มีสถานะ Running ออกจาก processList
     let filterArr = processList.filter((item) => {
-      return item.statusProcess != "Running" && item
+      return item.statusProcess !== "Running" && item
     });
     setProcessList(filterArr);
 
     // นำตัวแปรที่เก็บค่าที่ค้นหามาเปลี่ยน statusProcess เป็น Terminate
     terminateProcesss[0].statusProcess = "Terminate";
     terminateProcesss[0].turnAroundTime = terminateProcesss[0].excute + terminateProcesss[0].wait;
-    console.log("terminateProcesss", terminateProcesss);
+    // console.log("terminateProcesss", terminateProcesss);
 
+    setProcessCurrent(null)
     setProcessTerminateList([...processTerminateList, ...terminateProcesss]);
   };
 
@@ -138,6 +139,7 @@ const PCB = () => {
         temp.push(element.priority)
       })
 
+      // หาตัวเลขที่มีค่าซ้ำกัน
       let result = new Set(temp.filter((v, i, a) => a.indexOf(v) !== i))
 
       if (Array.from(result).length > 0) {
@@ -170,14 +172,22 @@ const PCB = () => {
       if (processList[i].id) {
         tempList[i].statusProcess = tempList[i].arrivalTime > 0 ? "Ready" : "New"
 
-        setStatusRunning(tempList[i])
+        if (processList[i].id === processCurrent) {
+          tempList[i].statusProcess = 'Running'
+        } else {
+          tempList[i].statusProcess = "Ready"
+        }
+
+        if (processCurrent === null) {
+          setStatusRunning(tempList[i])
+        }
 
         if (tempList[i].usb.status === true) {
           tempList[i].statusProcess = "Waiting"
         }
 
         if (tempList[i].statusProcess === "Running") {
-          setProcessCurrent(tempList[i].name)
+          setProcessCurrent(tempList[i].id)
           tempList[i].excute++
 
         } else if (tempList[i].statusProcess === "Ready") {
@@ -271,7 +281,7 @@ const PCB = () => {
               >
                 <div align="left">
                   <div>Clock : {clock}</div>
-                  <div>CPU process : {processCurrent}</div>
+                  <div>CPU process : {processList.map((e) => (e.id === processCurrent ? e.name : ''))}</div>
                   <div>I/O process : {usbCurrent}</div>
                   <div>AVG Waitting : 45.25</div>
                   <div>AVG Turnaround : 66.75</div>

@@ -6,10 +6,12 @@ import { Table } from 'reactstrap';
 import { useDispatch, useSelector } from 'react-redux'
 
 const Usb = () => {
-  // const dispatch = useDispatch()
+  const dispatch = useDispatch()
   const clock = useSelector((state) => state.clock)
   const processList = useSelector((state) => state.processList)
   // const setProcessList = ((any) => dispatch({ type: 'set', processList: any, }))
+  const setProcessCurrent = ((any) => dispatch({ type: 'set', processCurrent: any, }))
+
   const [useQue, setUsbQue] = useState()
 
   const sortUsb = () => {
@@ -34,6 +36,7 @@ const Usb = () => {
           tempList[i].usb.arrivalTime = clock
           tempList[i].usb.status = true
           tempList[i].usb.statusUsb = "Waiting"
+      setProcessCurrent(null)
         }
       }
     }
