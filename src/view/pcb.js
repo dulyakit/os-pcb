@@ -16,12 +16,18 @@ const PCB = () => {
   const usbCurrent = useSelector((state) => state.usbCurrent)
   const processTerminateList = useSelector((state) => state.processTerminateList)
 
+  const averageWaitting = useSelector((state) => state.averageWaitting)
+  const averageTurnaround = useSelector((state) => state.averageTurnaround)
+
   const setProcess = ((any) => dispatch({ type: 'set', process: any, }))
   const setClock = ((any) => dispatch({ type: 'set', clock: any, }))
   const setProcessList = ((any) => dispatch({ type: 'set', processList: any, }))
   const setProcessTerminateList = ((any) => dispatch({ type: 'set', processTerminateList: any, }))
   const setProcessCurrent = ((any) => dispatch({ type: 'set', processCurrent: any, }))
   const setUsbCurrent = ((any) => dispatch({ type: 'set', usbCurrent: any, }))
+
+  const setAverageWaitting = ((any) => dispatch({ type: 'set', averageWaitting: any, }))
+  const setAverageTurnaround = ((any) => dispatch({ type: 'set', averageTurnaround: any, }))
 
   const getRandomInt = (min, max) => {
     min = Math.ceil(min);
@@ -224,6 +230,18 @@ const PCB = () => {
     setProcessList([...processList, process])
   }, [process])
 
+  useEffect(() => {
+    let sumWaitting = 0
+    let sumTurnaround = 0
+    processTerminateList.forEach(element => {
+      sumWaitting += element.wait
+      sumTurnaround += element.turnAroundTime
+    });
+
+    setAverageWaitting(sumWaitting / processTerminateList.length)
+    setAverageTurnaround(sumTurnaround / processTerminateList.length)
+  }, [processTerminateList])
+
   return (
     <div >
       <div className="col-md-12">
@@ -286,8 +304,8 @@ const PCB = () => {
                   <div>Clock : {clock}</div>
                   <div>CPU process : {processList.map((e) => (e.id === processCurrent ? e.name : ''))}</div>
                   <div>I/O process : {usbCurrent}</div>
-                  <div>AVG Waitting : 45.25</div>
-                  <div>AVG Turnaround : 66.75</div>
+                  <div>AVG Waitting : {averageWaitting > 0 ? averageWaitting.toFixed(2) : 0.00}</div>
+                  <div>AVG Turnaround : {averageTurnaround > 0 ? averageTurnaround.toFixed(2) : 0.00}</div>
                 </div>
               </Card>
 
