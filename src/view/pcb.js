@@ -35,7 +35,7 @@ const PCB = () => {
       name: `Process${processList.length}`,
       arrivalTime: clock,
       priority: getRandomInt(0, 9),
-      burstTime: getRandomInt(0, 9),
+      burstTime: 0,
       usb: {
         status: false,
         statusUsb: 'Running',
@@ -64,6 +64,7 @@ const PCB = () => {
     // นำตัวแปรที่เก็บค่าที่ค้นหามาเปลี่ยน statusProcess เป็น Terminate
     terminateProcesss[0].statusProcess = "Terminate";
     terminateProcesss[0].turnAroundTime = terminateProcesss[0].excute + terminateProcesss[0].wait;
+    terminateProcesss[0].burstTime = terminateProcesss[0].excute + terminateProcesss[0].usb.runningTime;
     // console.log("terminateProcesss", terminateProcesss);
 
     setProcessCurrent(null)
@@ -189,6 +190,7 @@ const PCB = () => {
         if (tempList[i].statusProcess === "Running") {
           setProcessCurrent(tempList[i].id)
           tempList[i].excute++
+          tempList[i].burstTime++
 
         } else if (tempList[i].statusProcess === "Ready") {
           tempList[i].wait++
@@ -201,6 +203,7 @@ const PCB = () => {
 
           if (tempList[i].usb.statusUsb === "Running") {
             tempList[i].usb.runningTime++
+            tempList[i].burstTime++
           }
 
           if (tempList[i].usb.statusUsb === "Waiting") {
