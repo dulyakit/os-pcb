@@ -16,12 +16,18 @@ const PCB = () => {
   const usbCurrent = useSelector((state) => state.usbCurrent)
   const processTerminateList = useSelector((state) => state.processTerminateList)
 
+  const averageWaitting = useSelector((state) => state.averageWaitting)
+  const averageTurnaround = useSelector((state) => state.averageTurnaround)
+
   const setProcess = ((any) => dispatch({ type: 'set', process: any, }))
   const setClock = ((any) => dispatch({ type: 'set', clock: any, }))
   const setProcessList = ((any) => dispatch({ type: 'set', processList: any, }))
   const setProcessTerminateList = ((any) => dispatch({ type: 'set', processTerminateList: any, }))
   const setProcessCurrent = ((any) => dispatch({ type: 'set', processCurrent: any, }))
   const setUsbCurrent = ((any) => dispatch({ type: 'set', usbCurrent: any, }))
+
+  const setAverageWaitting = ((any) => dispatch({ type: 'set', averageWaitting: any, }))
+  const setAverageTurnaround = ((any) => dispatch({ type: 'set', averageTurnaround: any, }))
 
   const getRandomInt = (min, max) => {
     min = Math.ceil(min);
@@ -35,7 +41,7 @@ const PCB = () => {
       name: `Process${processList.length}`,
       arrivalTime: clock,
       priority: getRandomInt(0, 9),
-      burstTime: getRandomInt(0, 9),
+      burstTime: 0,
       usb: {
         status: false,
         statusUsb: 'Running',
@@ -52,20 +58,22 @@ const PCB = () => {
   const terminateProcess = () => {
     // ค้นหา Object ที่มีสถานะเป็น Running และเปลี่ยนสถานะเป็น Terminate
     let terminateProcesss = processList.filter((item) => {
-      return item.statusProcess == "Running" && { ...item, statusProcess: "Terminate" }
+      return item.statusProcess === "Running" && { ...item, statusProcess: "Terminate" }
     });
 
     // กรอง Object ที่มีสถานะ Running ออกจาก processList
     let filterArr = processList.filter((item) => {
-      return item.statusProcess != "Running" && item
+      return item.statusProcess !== "Running" && item
     });
     setProcessList(filterArr);
 
     // นำตัวแปรที่เก็บค่าที่ค้นหามาเปลี่ยน statusProcess เป็น Terminate
     terminateProcesss[0].statusProcess = "Terminate";
     terminateProcesss[0].turnAroundTime = terminateProcesss[0].excute + terminateProcesss[0].wait;
-    console.log("terminateProcesss", terminateProcesss);
+    terminateProcesss[0].burstTime = terminateProcesss[0].excute + terminateProcesss[0].usb.runningTime;
+    // console.log("terminateProcesss", terminateProcesss);
 
+    setProcessCurrent(null)
     setProcessTerminateList([...processTerminateList, ...terminateProcesss]);
   };
 
@@ -138,6 +146,7 @@ const PCB = () => {
         temp.push(element.priority)
       })
 
+      // หาตัวเลขที่มีค่าซ้ำกัน
       let result = new Set(temp.filter((v, i, a) => a.indexOf(v) !== i))
 
       if (Array.from(result).length > 0) {
@@ -170,15 +179,24 @@ const PCB = () => {
       if (processList[i].id) {
         tempList[i].statusProcess = tempList[i].arrivalTime > 0 ? "Ready" : "New"
 
-        setStatusRunning(tempList[i])
+        if (processList[i].id === processCurrent) {
+          tempList[i].statusProcess = 'Running'
+        } else {
+          tempList[i].statusProcess = "Ready"
+        }
+
+        if (processCurrent === null) {
+          setStatusRunning(tempList[i])
+        }
 
         if (tempList[i].usb.status === true) {
           tempList[i].statusProcess = "Waiting"
         }
 
         if (tempList[i].statusProcess === "Running") {
-          setProcessCurrent(tempList[i].name)
+          setProcessCurrent(tempList[i].id)
           tempList[i].excute++
+          tempList[i].burstTime++
 
         } else if (tempList[i].statusProcess === "Ready") {
           tempList[i].wait++
@@ -191,6 +209,7 @@ const PCB = () => {
 
           if (tempList[i].usb.statusUsb === "Running") {
             tempList[i].usb.runningTime++
+            tempList[i].burstTime++
           }
 
           if (tempList[i].usb.statusUsb === "Waiting") {
@@ -211,6 +230,18 @@ const PCB = () => {
     setProcessList([...processList, process])
   }, [process])
 
+  useEffect(() => {
+    let sumWaitting = 0
+    let sumTurnaround = 0
+    processTerminateList.forEach(element => {
+      sumWaitting += element.wait
+      sumTurnaround += element.turnAroundTime
+    });
+
+    setAverageWaitting(sumWaitting / processTerminateList.length)
+    setAverageTurnaround(sumTurnaround / processTerminateList.length)
+  }, [processTerminateList])
+
   return (
     <div >
       <div className="col-md-12">
@@ -229,7 +260,7 @@ const PCB = () => {
                   </div>
                 </div>
               }
-                style={{ height: '500px', overflow: 'scroll', overflowX: 'hidden' }}>
+                style={{ height: '600px', overflow: 'scroll', overflowX: 'hidden' }}>
                 <Table hover>
                   <thead align="left">
                     <tr>
@@ -271,10 +302,10 @@ const PCB = () => {
               >
                 <div align="left">
                   <div>Clock : {clock}</div>
-                  <div>CPU process : {processCurrent}</div>
+                  <div>CPU process : {processList.map((e) => (e.id === processCurrent ? e.name : ''))}</div>
                   <div>I/O process : {usbCurrent}</div>
-                  <div>AVG Waitting : 45.25</div>
-                  <div>AVG Turnaround : 66.75</div>
+                  <div>AVG Waitting : {averageWaitting > 0 ? averageWaitting.toFixed(2) : 0.00}</div>
+                  <div>AVG Turnaround : {averageTurnaround > 0 ? averageTurnaround.toFixed(2) : 0.00}</div>
                 </div>
               </Card>
 

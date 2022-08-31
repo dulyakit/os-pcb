@@ -33,7 +33,7 @@ const Terminate = () => {
                   </thead>
                   <tbody align="left">
                     {terminateList.map((items, idx) => (
-                      <tr>
+                      <tr key={idx}>
                         <td>{items.name}</td>
                         <td>{items.arrivalTime}</td>
                         <td>{items.priority}</td>
