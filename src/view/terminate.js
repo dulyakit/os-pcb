@@ -17,7 +17,7 @@ const Terminate = () => {
                   <span style={{ fontSize: '18px' }}>Terminate</span>
                 </div>
               }
-                style={{ height: '300px', overflow: 'scroll', overflowX: 'hidden' }}>
+                style={{ height: '300px', overflow: 'scroll', overflowX: 'scroll' }}>
                 <Table hover>
                   <thead align="left">
                     <tr>
