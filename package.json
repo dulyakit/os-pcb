@@ -2,6 +2,7 @@
   "name": "os-priority-non-preemptive",
   "version": "0.1.1",
   "private": true,
+  "homepage": "https://rmuti.ac.th/student/dulyakit.ph/React-Os/",
   "author": "Dulyakit Phommachat (Software Engineer)",
   "dependencies": {
     "@testing-library/jest-dom": "^5.16.4",
