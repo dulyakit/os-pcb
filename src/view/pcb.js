@@ -243,7 +243,7 @@ const PCB = () => {
       <div className="col-md-12">
         <Card>
           <div className="row">
-            <div className="col-md-8">
+            <div className="col-md-8 mb-3">
               <Card type="inner" title={
                 <div className='row'>
                   <span style={{ fontSize: '18px' }}>PCB</span>

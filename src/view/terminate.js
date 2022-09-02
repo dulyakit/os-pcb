@@ -11,7 +11,7 @@ const Terminate = () => {
       <div className="col-md-12">
         <Card>
           <div className="row">
-            <div className="col-md-9">
+            <div className="col-md-9 mb-3">
               <Card type="inner" title={
                 <div className='row'>
                   <span style={{ fontSize: '18px' }}>Terminate</span>
