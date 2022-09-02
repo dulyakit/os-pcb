@@ -18,7 +18,7 @@ const Terminate = () => {
                 </div>
               }
                 style={{ height: '300px', overflow: 'scroll', overflowX: 'scroll' }}>
-                <Table hover>
+                <Table hover className='text-nowrap'>
                   <thead align="left">
                     <tr>
                       <th style={{ width: '15%' }}>Process Name</th>

@@ -11,6 +11,7 @@ const PCB = () => {
   const dispatch = useDispatch()
   const clock = useSelector((state) => state.clock)
   const processList = useSelector((state) => state.processList)
+  const processLast = useSelector((state) => state.processLast)
   const process = useSelector((state) => state.process)
   const processCurrent = useSelector((state) => state.processCurrent)
   const usbCurrent = useSelector((state) => state.usbCurrent)
@@ -22,6 +23,7 @@ const PCB = () => {
   const setProcess = ((any) => dispatch({ type: 'set', process: any, }))
   const setClock = ((any) => dispatch({ type: 'set', clock: any, }))
   const setProcessList = ((any) => dispatch({ type: 'set', processList: any, }))
+  const setProcessLast = ((any) => dispatch({ type: 'set', processLast: any, }))
   const setProcessTerminateList = ((any) => dispatch({ type: 'set', processTerminateList: any, }))
   const setProcessCurrent = ((any) => dispatch({ type: 'set', processCurrent: any, }))
   const setUsbCurrent = ((any) => dispatch({ type: 'set', usbCurrent: any, }))
@@ -37,8 +39,8 @@ const PCB = () => {
 
   const addProcess = () => {
     setProcess({
-      id: processList.length,
-      name: `Process${processList.length}`,
+      id: processLast,
+      name: `Process${processLast}`,
       arrivalTime: clock,
       priority: getRandomInt(0, 9),
       usb: {
@@ -52,6 +54,7 @@ const PCB = () => {
       wait: 0,
       statusProcess: 'New'
     })
+    setProcessLast(processLast + 1)
   }
 
   const terminateProcess = () => {
@@ -257,7 +260,7 @@ const PCB = () => {
                 </div>
               }
                 style={{ height: '600px', overflow: 'scroll', overflowX: 'scroll' }}>
-                <Table hover>
+                <Table hover className='text-nowrap'>
                   <thead align="left">
                     <tr>
                       <th style={{ width: '15%' }}>Process Name</th>

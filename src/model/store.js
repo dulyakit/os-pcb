@@ -1,5 +1,6 @@
 const initialState = {
   clock: 0,
+  processLast: 1,
   processList: [],
   process: {},
   processCurrent: null,

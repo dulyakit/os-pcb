@@ -29,7 +29,7 @@ function Que() {
       type="inner"
       title={<span style={{ fontSize: '18px' }}>Ready Que</span>}
       style={{ height: '300px', overflow: 'scroll', overflowX: 'hidden' }}>
-      <Table align="left" hover>
+      <Table align="left" hover className='text-nowrap'>
         <thead>
           <tr align='left'>
             <th >
