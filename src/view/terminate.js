@@ -11,20 +11,19 @@ const Terminate = () => {
       <div className="col-md-12">
         <Card>
           <div className="row">
-            <div className="col-md-9">
+            <div className="col-md-9 mb-3">
               <Card type="inner" title={
                 <div className='row'>
                   <span style={{ fontSize: '18px' }}>Terminate</span>
                 </div>
               }
                 style={{ height: '300px', overflow: 'scroll', overflowX: 'scroll' }}>
-                <Table hover>
+                <Table hover className='text-nowrap'>
                   <thead align="left">
                     <tr>
                       <th style={{ width: '15%' }}>Process Name</th>
                       <th style={{ width: '10%' }}>Arrival Time</th>
                       <th style={{ width: '10%' }}>Priority</th>
-                      <th style={{ width: '10%' }}>Burst Time</th>
                       <th style={{ width: '10%' }}>Execute Time</th>
                       <th style={{ width: '10%' }}>Waitting Time</th>
                       <th style={{ width: '13%' }}>Turn around Time</th>
@@ -37,9 +36,8 @@ const Terminate = () => {
                         <td>{items.name}</td>
                         <td>{items.arrivalTime}</td>
                         <td>{items.priority}</td>
-                        <td>{items.burstTime}</td>
-                        <td>{items.excute}</td>
-                        <td>{items.wait}</td>
+                        <td>{items.excuteTime}</td>
+                        <td>{items.waittingTime}</td>
                         <td>{items.turnAroundTime}</td>
                         <td style={{ backgroundColor: 'pink' }}>Terminate</td>
                       </tr>

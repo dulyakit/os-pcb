@@ -1,0 +1,14 @@
+comment โค้ด ทุกจุดที่สำคัญ
+
+เปลี่ยนชื่อ 
+
+store.js
+  processCurrent -> processRunning
+  usbCurrent -> usbRunning
+
+pcb.js
+  usb.status -> usb.active
+  excute -> excuteTime
+  wait -> waittingTime
+
+
