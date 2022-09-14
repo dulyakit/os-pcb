@@ -1,4 +1,4 @@
-## Getting Started : OS Priority Non-Preemptive Scheduling
+## Getting Started Project : OS Priority Non-Preemptive Scheduling
 
 install package:
 
