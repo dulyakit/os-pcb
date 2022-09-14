@@ -17,7 +17,7 @@ release-note:
 
 project demo:
 
-### `https://rmuti.ac.th/student/dulyakit.ph/React-Os/`
+https://rmuti.ac.th/student/dulyakit.ph/React-Os/
 
 #
 Architectural design and development by:
