@@ -4,13 +4,14 @@ import React, { useState, useEffect } from 'react'
 import { Card } from 'antd';
 import { Table } from 'reactstrap';
 
-import { useDispatch, useSelector } from 'react-redux'
+import { useSelector } from 'react-redux'
 
 function Que() {
   const processList = useSelector((state) => state.processList)
   const clock = useSelector((state) => state.clock)
   const [queProcess, setQueProcess] = useState([])
 
+  // หาก clock มีการเปลี่ยนแปลง จะนำ process ที่มีสถานะเป็น Ready มาจัดเรียงใหม่เพื่อนำไปแสดงผล
   useEffect(() => {
     let temp = []
     processList.map((items) => {
@@ -19,9 +20,10 @@ function Que() {
       }
     })
 
+    // หน่วงเวลา 1 วินาทีเพื่อรอการแสดงผลของ process
     setTimeout(() => {
       setQueProcess(temp)
-    }, 1000);
+    }, 1000)
   }, [clock])
 
   return (

@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect } from 'react'
 import _ from 'lodash'
 import { Card } from 'antd';
@@ -9,15 +10,16 @@ const Usb = () => {
   const dispatch = useDispatch()
   const clock = useSelector((state) => state.clock)
   const processList = useSelector((state) => state.processList)
-  // const setProcessList = ((any) => dispatch({ type: 'set', processList: any, }))
-  const setProcessCurrent = ((any) => dispatch({ type: 'set', processCurrent: any, }))
+  const setProcessRunning = ((any) => dispatch({ type: 'set', processRunning: any, }))
 
   const [useQue, setUsbQue] = useState()
 
   const sortUsb = () => {
     let temp = []
+
+    // นำ process ที่ถูก usb ดึงไปใช้งานมาจัดอยู่ใน array ใหม่
     for (let i = 0; i < processList.length; i++) {
-      if (processList[i].usb?.status === true) {
+      if (processList[i].usb?.active === true) {
         temp.push({
           name: processList[i].name,
           ...processList[i].usb
@@ -25,6 +27,7 @@ const Usb = () => {
       }
     }
 
+    // นำ array ที่ได้มาจัดเรียงตาม arrivalTime(usb.arrivalTime) จากน้อยไปมาก
     setUsbQue(_.orderBy(temp, ['arrivalTime'], ['asc']))
   }
 
@@ -32,11 +35,13 @@ const Usb = () => {
     let tempList = processList
     for (let i = 0; i < processList.length; i++) {
       if (processList[i].id) {
+
+        // นำ process ที่ใช้งานอยู่ในปัจจุบันมาใช้งาน usb 
         if (tempList[i].statusProcess === "Running") {
           tempList[i].usb.arrivalTime = clock
-          tempList[i].usb.status = true
+          tempList[i].usb.active = true
           tempList[i].usb.statusUsb = "Waiting"
-      setProcessCurrent(null)
+          setProcessRunning(null) // กำหนดให้ ProcessRunning เป็น null เพื่อให้ PCB ไปหา process running ใหม่
         }
       }
     }
@@ -46,16 +51,20 @@ const Usb = () => {
     let tempList = processList
     for (let i = 0; i < processList.length; i++) {
       if (processList[i].id) {
+
+        // กำหนดให้ statusUsb ที่เป็น running ถูกถอดออก โดยให้ usb.active เป็น false
         if (tempList[i].usb?.statusUsb === "Running") {
-          tempList[i].usb.status = false
+          tempList[i].usb.active = false
         }
       }
     }
   }
 
+  // หาก clock มีการเปลี่ยนแปลง จะเรียกใช้ sortUsb เพื่อจัดเรียงคิวตาม arrivalTime ของ usb
   useEffect(() => {
     sortUsb()
   }, [clock])
+
   return (
     <Card
       className='mt-3'

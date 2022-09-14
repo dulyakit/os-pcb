@@ -36,8 +36,8 @@ const Terminate = () => {
                         <td>{items.name}</td>
                         <td>{items.arrivalTime}</td>
                         <td>{items.priority}</td>
-                        <td>{items.excute}</td>
-                        <td>{items.wait}</td>
+                        <td>{items.excuteTime}</td>
+                        <td>{items.waittingTime}</td>
                         <td>{items.turnAroundTime}</td>
                         <td style={{ backgroundColor: 'pink' }}>Terminate</td>
                       </tr>

@@ -3,9 +3,9 @@ const initialState = {
   processLast: 1,
   processList: [],
   process: {},
-  processCurrent: null,
+  processRunning: null,
   processTerminateList: [],
-  usbCurrent: '',
+  usbRunning: '',
   averageWaitting: 0,
   averageTurnaround: 0,
 }
