@@ -11,11 +11,13 @@ build project:
 
 ### `yarn build or npm build`
 
-
-
-Read release-note:
+release-note:
 
 ### `release-note.text`
+
+project demo:
+
+### `https://rmuti.ac.th/student/dulyakit.ph/React-Os/`
 
 #
 Architectural design and development by:
