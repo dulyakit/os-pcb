@@ -80,8 +80,8 @@ const Usb = () => {
         </div>
       }
       style={{ height: '370px', overflow: 'scroll', overflowX: 'scroll' }}>
-      <Table align="left" hover className='text-nowrap'>
-        <thead>
+      <Table align="left" hover >
+        <thead align="left">
           <tr>
             <th>Process Name</th>
             <th>Running Time</th>

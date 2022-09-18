@@ -30,7 +30,7 @@ function Que() {
     <Card
       type="inner"
       title={<span style={{ fontSize: '18px' }}>Ready Que</span>}
-      style={{ height: '300px', overflow: 'scroll', overflowX: 'hidden' }}>
+      style={{ height: '350px', overflow: 'scroll', overflowX: 'hidden' }}>
       <Table align="left" hover className='text-nowrap'>
         <thead>
           <tr align='left'>

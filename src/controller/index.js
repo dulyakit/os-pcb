@@ -8,8 +8,10 @@ function index() {
   return (
     <>
       <Header />
+      <div style={{minHeight: '90vh'}}>
         <PCB />
         <Terminate />
+      </div>
       <Footer />
     </>
   )
