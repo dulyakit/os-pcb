@@ -8,28 +8,13 @@ import { useDispatch, useSelector } from 'react-redux'
 
 const Usb = () => {
   const dispatch = useDispatch()
+
   const clock = useSelector((state) => state.clock)
   const processList = useSelector((state) => state.processList)
+
   const setProcessRunning = ((any) => dispatch({ type: 'set', processRunning: any, }))
 
   const [useQue, setUsbQue] = useState()
-
-  const sortUsb = () => {
-    let temp = []
-
-    // นำ process ที่ถูก usb ดึงไปใช้งานมาจัดอยู่ใน array ใหม่
-    for (let i = 0; i < processList.length; i++) {
-      if (processList[i].usb?.active === true) {
-        temp.push({
-          name: processList[i].name,
-          ...processList[i].usb
-        })
-      }
-    }
-
-    // นำ array ที่ได้มาจัดเรียงตาม arrivalTime(usb.arrivalTime) จากน้อยไปมาก
-    setUsbQue(_.orderBy(temp, ['arrivalTime'], ['asc']))
-  }
 
   const addUsb = () => {
     let tempList = processList
@@ -60,6 +45,23 @@ const Usb = () => {
     }
   }
 
+  const sortUsb = () => {
+    let temp = []
+
+    // นำ process ที่ถูก usb ดึงไปใช้งานมาจัดอยู่ใน array ใหม่
+    for (let i = 0; i < processList.length; i++) {
+      if (processList[i].usb?.active === true) {
+        temp.push({
+          name: processList[i].name,
+          ...processList[i].usb
+        })
+      }
+    }
+
+    // นำ array ที่ได้มาจัดเรียงตาม arrivalTime(usb.arrivalTime) จากน้อยไปมาก
+    setUsbQue(_.orderBy(temp, ['arrivalTime'], ['asc']))
+  }
+
   // หาก clock มีการเปลี่ยนแปลง จะเรียกใช้ sortUsb เพื่อจัดเรียงคิวตาม arrivalTime ของ usb
   useEffect(() => {
     sortUsb()
@@ -80,8 +82,8 @@ const Usb = () => {
         </div>
       }
       style={{ height: '370px', overflow: 'scroll', overflowX: 'scroll' }}>
-      <Table align="left" hover className='text-nowrap'>
-        <thead>
+      <Table align="left" hover >
+        <thead align="left">
           <tr>
             <th>Process Name</th>
             <th>Running Time</th>
