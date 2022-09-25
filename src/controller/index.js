@@ -8,7 +8,7 @@ function index() {
   return (
     <>
       <Header />
-      <div style={{minHeight: '90vh'}}>
+      <div style={{ minHeight: '90vh' }}>
         <PCB />
         <Terminate />
       </div>

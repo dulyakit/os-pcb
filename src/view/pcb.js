@@ -61,7 +61,7 @@ const PCB = () => {
 
   const terminateProcess = () => {
 
-    // ค้นหา Object ที่มีสถานะเป็น Running และเปลี่ยนสถานะเป็น Terminate
+    // ค้นหา Object ที่มีสถานะเป็น Running และเปลี่ยนสถานะเป็น Terminate แล้วนำมาใส่ใน terminateProcesss
     let terminateProcesss = processList.filter((item) => {
       return item.statusProcess === "Running" && { ...item, statusProcess: "Terminate" }
     });
@@ -72,13 +72,11 @@ const PCB = () => {
     });
     setProcessList(filterArr);
 
-    // นำตัวแปรที่เก็บค่าที่ค้นหามาเปลี่ยน statusProcess เป็น Terminate
-    terminateProcesss[0].statusProcess = "Terminate";
-
     // กำหนด turnAroundTime เป็นผลรวมของ excuteTime + waittingTime
     terminateProcesss[0].turnAroundTime = terminateProcesss[0].excuteTime + terminateProcesss[0].waittingTime;
 
     setProcessRunning(null) // กำหนดให้  process ปัจจุบันเป็น null
+
     setProcessTerminateList([...processTerminateList, ...terminateProcesss]); // เพิ่ม processTerminate
 
   };
@@ -320,8 +318,8 @@ const PCB = () => {
                   <div>Clock : {clock}</div>
                   <div>CPU process : {processList.map((e) => (e.id === processRunning ? e.name : ''))}</div>
                   <div>I/O process : {usbRunning}</div>
-                  <div>AVG Waitting : {averageWaitting > 0 ? averageWaitting.toFixed(2) : 0.00}</div>
-                  <div>AVG Turnaround : {averageTurnaround > 0 ? averageTurnaround.toFixed(2) : 0.00}</div>
+                  <div>AVG Waitting : {averageWaitting > 0 ? averageWaitting.toFixed(2) : '0.00'}</div>
+                  <div>AVG Turnaround : {averageTurnaround > 0 ? averageTurnaround.toFixed(2) : '0.00'}</div>
                 </div>
               </Card>
 

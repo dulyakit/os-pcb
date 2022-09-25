@@ -6,6 +6,7 @@ import Que from './que';
 
 const Terminate = () => {
   const terminateList = useSelector((state) => state.processTerminateList)
+  
   return (
     <div >
       <div className="col-md-12">
