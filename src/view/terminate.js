@@ -6,6 +6,7 @@ import Que from './que';
 
 const Terminate = () => {
   const terminateList = useSelector((state) => state.processTerminateList)
+  
   return (
     <div >
       <div className="col-md-12">
@@ -17,7 +18,7 @@ const Terminate = () => {
                   <span style={{ fontSize: '18px' }}>Terminate</span>
                 </div>
               }
-                style={{ height: '300px', overflow: 'scroll', overflowX: 'scroll' }}>
+                style={{ height: '350px', overflow: 'scroll', overflowX: 'scroll' }}>
                 <Table hover className='text-nowrap'>
                   <thead align="left">
                     <tr>

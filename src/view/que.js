@@ -9,6 +9,7 @@ import { useSelector } from 'react-redux'
 function Que() {
   const processList = useSelector((state) => state.processList)
   const clock = useSelector((state) => state.clock)
+  
   const [queProcess, setQueProcess] = useState([])
 
   // หาก clock มีการเปลี่ยนแปลง จะนำ process ที่มีสถานะเป็น Ready มาจัดเรียงใหม่เพื่อนำไปแสดงผล
@@ -30,7 +31,7 @@ function Que() {
     <Card
       type="inner"
       title={<span style={{ fontSize: '18px' }}>Ready Que</span>}
-      style={{ height: '300px', overflow: 'scroll', overflowX: 'hidden' }}>
+      style={{ height: '350px', overflow: 'scroll', overflowX: 'auto' }}>
       <Table align="left" hover className='text-nowrap'>
         <thead>
           <tr align='left'>
