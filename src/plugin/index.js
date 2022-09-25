@@ -18,24 +18,26 @@ const findNumber = (type, arr, priority) => {
       PA = Priority ArrivalTime
       UA = USB ArrivalTime
     */
-    if (type === 'P') {
-      for (let i = arrs.length - 1; i >= 0; i--) {
-        tmp = arrs[i].priority;
-        if (tmp < lowest && arrs[i].usb.active === false) lowest = tmp;
-      }
-    } else if (type === 'PA') {
-      for (let i = arrs.length - 1; i >= 0; i--) {
-        if (arrs[i].priority === priority) {
-          tmp = arrs[i].arrivalTime;
+    for (let i = arrs.length - 1; i >= 0; i--) {
+      switch (type) {
+        case 'P':
+          tmp = arrs[i].priority;
           if (tmp < lowest && arrs[i].usb.active === false) lowest = tmp;
-        }
-      }
-    } else if (type === 'UA') {
-      for (let i = arrs.length - 1; i >= 0; i--) {
-        if (arrs[i].usb?.active === true) {
-          tmp = arrs[i].usb.arrivalTime;
-          if (tmp < lowest) lowest = tmp;
-        }
+          break;
+        case 'PA':
+          if (arrs[i].priority === priority) {
+            tmp = arrs[i].arrivalTime;
+            if (tmp < lowest && arrs[i].usb.active === false) lowest = tmp;
+          }
+          break;
+        case 'UA':
+          if (arrs[i].usb?.active === true) {
+            tmp = arrs[i].usb.arrivalTime;
+            if (tmp < lowest) lowest = tmp;
+          }
+          break;
+        default: alert("Plese input type");
+          break;
       }
     }
   }
