@@ -8,6 +8,7 @@ import { Card } from 'antd';
 import { Table } from 'reactstrap';
 
 import Usb from './usb';
+import Que from './que';
 
 import { getRandomInt, findNumber } from '../plugin'
 
@@ -18,10 +19,7 @@ const PCB = () => {
   const processLast = useSelector((state) => state.processLast)
   const process = useSelector((state) => state.process)
   const processRunning = useSelector((state) => state.processRunning)
-  const usbRunning = useSelector((state) => state.usbRunning)
   const processTerminateList = useSelector((state) => state.processTerminateList)
-  const averageWaitting = useSelector((state) => state.averageWaitting)
-  const averageTurnaround = useSelector((state) => state.averageTurnaround)
 
   const setProcess = ((any) => dispatch({ type: 'set', process: any, }))
   const setClock = ((any) => dispatch({ type: 'set', clock: any, }))
@@ -141,36 +139,27 @@ const PCB = () => {
     for (let i = 0; i < processList.length; i++) {
       if (processList[i].id) {
 
-        // กำหนดสถานะเริ่มต้นของ process นั้นๆให้เป็น Ready
-        tempList[i].statusProcess = "Ready"
-
-        // กำหนดสถานะของ process ที่ใช้งานอยู่ให้เป็น Running
-        if (processList[i].id === processRunning) {
+        if (processList[i].id === processRunning) { // กำหนดสถานะของ process ที่ใช้งานอยู่ให้เป็น Running
           tempList[i].statusProcess = 'Running'
         } else {
           tempList[i].statusProcess = "Ready"
         }
 
-        // หากไม่มี process ที่ใช้งานอยู่จะเรียกใช้ฟังก์ชั่น setStatusRunning เพื่อหา process มาใช้งาน
-        if (processRunning === null) {
+        if (processRunning === null) {  // หากไม่มี process ที่ใช้งานอยู่จะเรียกใช้ฟังก์ชั่น setStatusRunning เพื่อหา process มาใช้งาน
           setStatusRunning(tempList[i])
         }
 
-        // กำหนดสถานะเป็น Waiting หาก process ถูก usb ดึงไปใช้งาน
-        if (tempList[i].usb.active === true) {
+        if (tempList[i].usb.active === true) {  // กำหนดสถานะเป็น Waiting หาก process ถูก usb ดึงไปใช้งาน
           tempList[i].statusProcess = "Waiting"
         }
 
-        // หากสถานะของ process นั้นๆเป็น Running จะนับ excuteTime เพิ่มทีละ 1 ตาม clock
-        if (tempList[i].statusProcess === "Running") {
+        if (tempList[i].statusProcess === "Running") {  // หากสถานะของ process นั้นๆเป็น Running จะนับ excuteTime เพิ่มทีละ 1 ตาม clock
           tempList[i].excuteTime++
 
-          // หากสถานะของ process นั้นๆเป็น Ready จะนับ waittingTime เพิ่มทีละ 1 ตาม clock
-        } else if (tempList[i].statusProcess === "Ready") {
+        } else if (tempList[i].statusProcess === "Ready") {  // หากสถานะของ process นั้นๆเป็น Ready จะนับ waittingTime เพิ่มทีละ 1 ตาม clock
           tempList[i].waittingTime++
 
-          // หากสถานะของ process ถูก usb ดึงไปใช้งาน จะนับ waittingTime เพิ่มทีละ 1 ตาม clock
-        } else if (tempList[i].usb.active === true) {
+        } else if (tempList[i].usb.active === true) { // หากสถานะของ process ถูก usb ดึงไปใช้งาน จะนับ waittingTime เพิ่มทีละ 1 ตาม clock
           tempList[i].excuteTime = tempList[i].excuteTime
           tempList[i].waittingTime++
 
@@ -178,9 +167,8 @@ const PCB = () => {
 
           if (tempList[i].usb.statusUsb === "Running") {
             tempList[i].usb.runningTime++
-          }
 
-          if (tempList[i].usb.statusUsb === "Waiting") {
+          } else if (tempList[i].usb.statusUsb === "Waiting") {
             tempList[i].usb.responseTime++
           }
 
@@ -188,22 +176,18 @@ const PCB = () => {
       }
     }
 
-    // กำหนดให้ processList เป็บ tempList ที่ถูกปรับปรุงใหม่ในแต่ละรอบ
-    setProcessList(tempList)
+    setProcessList(tempList)  // กำหนดให้ processList เป็บ tempList ที่ถูกปรับปรุงใหม่ในแต่ละรอบ
   }
 
-  // หาก clock มีการเปลี่ยนแปลง จะเรียกใช้ updateDataProcess เพื่อปรับปรุง process
-  useEffect(() => {
+  useEffect(() => {   // หาก clock มีการเปลี่ยนแปลง จะเรียกใช้ updateDataProcess เพื่อปรับปรุง process
     updateDataProcess()
   }, [clock])
 
-  // หาก process มีการเปลี่ยนแปลง จะทำการเพิ่ม process ใหม่เข้าไปใน processList
-  useEffect(() => {
+  useEffect(() => {   // หาก process มีการเปลี่ยนแปลง จะทำการเพิ่ม process ใหม่เข้าไปใน processList
     setProcessList([...processList, process])
   }, [process])
 
-  // หาก processTerminateList มีการเปลี่ยนแปลง จะทำการหาค่าเฉลี่ยของ Waitting Time และ Turnaround Time
-  useEffect(() => {
+  useEffect(() => {   // หาก processTerminateList มีการเปลี่ยนแปลง จะทำการหาค่าเฉลี่ยของ Waitting Time และ Turnaround Time
     let sumWaitting = 0
     let sumTurnaround = 0
     processTerminateList.forEach(element => {
@@ -211,7 +195,7 @@ const PCB = () => {
       sumTurnaround += element.turnAroundTime
     });
 
-    // หาค่าเฉลี่ยโดยนำผลรวมในแต่ละอันมาหารขนาดของ processTerminateList
+    /** หาค่าเฉลี่ยโดยนำผลรวมในแต่ละอันมาหารขนาดของ processTerminateList */
     setAverageWaitting(sumWaitting / processTerminateList.length)
     setAverageTurnaround(sumTurnaround / processTerminateList.length)
   }, [processTerminateList])
@@ -234,7 +218,7 @@ const PCB = () => {
                   </div>
                 </div>
               }
-                style={{ height: '600px', overflow: 'scroll', overflowX: 'scroll' }}>
+                style={{ height: '650px', overflow: 'scroll', overflowX: 'scroll' }}>
                 <Table hover className='text-nowrap'>
                   <thead align="left">
                     <tr>
@@ -268,18 +252,11 @@ const PCB = () => {
 
             </div>
             <div className="col-md-4">
-              <Card
-                type="inner"
-                title={<span style={{ fontSize: '18px' }}>Controller</span>}
-              >
-                <div align="left">
-                  <div>Clock : {clock}</div>
-                  <div>CPU process : {processList.map((e) => (e.id === processRunning ? e.name : ''))}</div>
-                  <div>I/O process : {usbRunning}</div>
-                  <div>AVG Waitting : {averageWaitting > 0 ? averageWaitting.toFixed(2) : '0.00'}</div>
-                  <div>AVG Turnaround : {averageTurnaround > 0 ? averageTurnaround.toFixed(2) : '0.00'}</div>
-                </div>
-              </Card>
+
+              {/* Que Component  */}
+              <Que />
+              {/* Que Component  */}
+
 
               {/* Usb Component  */}
               <Usb />

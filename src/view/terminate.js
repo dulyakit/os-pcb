@@ -2,11 +2,16 @@ import React from 'react'
 import { Card } from 'antd';
 import { Table } from 'reactstrap';
 import { useSelector } from 'react-redux'
-import Que from './que';
 
 const Terminate = () => {
+  const clock = useSelector((state) => state.clock)
+  const processList = useSelector((state) => state.processList)
   const terminateList = useSelector((state) => state.processTerminateList)
-  
+  const usbRunning = useSelector((state) => state.usbRunning)
+  const averageWaitting = useSelector((state) => state.averageWaitting)
+  const averageTurnaround = useSelector((state) => state.averageTurnaround)
+  const processRunning = useSelector((state) => state.processRunning)
+
   return (
     <div >
       <div className="col-md-12">
@@ -48,11 +53,19 @@ const Terminate = () => {
               </Card>
             </div>
             <div className="col-md-3">
-
-              {/* Que Component  */}
-              <Que />
-              {/* Que Component  */}
-
+              <Card
+                type="inner"
+                title={<span style={{ fontSize: '18px' }}>Controller</span>}
+                style={{height:'350px'}}
+              >
+                <div align="left">
+                  <div>Clock : {clock}</div>
+                  <div>CPU process : {processList.map((e) => (e.id === processRunning ? e.name : ''))}</div>
+                  <div>I/O process : {usbRunning}</div>
+                  <div>AVG Waitting : {averageWaitting > 0 ? averageWaitting.toFixed(2) : '0.00'}</div>
+                  <div>AVG Turnaround : {averageTurnaround > 0 ? averageTurnaround.toFixed(2) : '0.00'}</div>
+                </div>
+              </Card>
             </div>
           </div>
         </Card>
