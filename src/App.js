@@ -1,11 +1,11 @@
 import './App.css';
 import Controller from './controller'
-import store from './controller/storeController'
+import storeController from './controller/storeController'
 import { Provider } from 'react-redux'
 
 function App() {
   return (
-    <Provider store={store}>
+    <Provider store={storeController}>
       <div className="App">
         <Controller />
       </div>
