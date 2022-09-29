@@ -31,7 +31,7 @@ function Que() {
     <Card
       type="inner"
       title={<span style={{ fontSize: '18px' }}>Ready Que</span>}
-      style={{ height: '350px', overflow: 'scroll', overflowX: 'auto' }}>
+      style={{ height: '300px', overflow: 'scroll', overflowX: 'auto' }}>
       <Table align="left" hover className='text-nowrap'>
         <thead>
           <tr align='left'>
@@ -40,6 +40,9 @@ function Que() {
             </th>
             <th>
               Arrival Time
+            </th>
+            <th>
+              Priority
             </th>
           </tr>
         </thead>
@@ -51,6 +54,9 @@ function Que() {
               </td>
               <td>
                 {items.arrivalTime}
+              </td>
+              <td>
+                {items.priority}
               </td>
             </tr>
           ))

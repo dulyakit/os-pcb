@@ -14,7 +14,7 @@ const Usb = () => {
 
   const setProcessRunning = ((any) => dispatch({ type: 'set', processRunning: any, }))
 
-  const [useQue, setUsbQue] = useState()
+  const [usbQue, setUsbQue] = useState()
 
   const addUsb = () => {
     let tempList = processList
@@ -81,7 +81,7 @@ const Usb = () => {
           </div>
         </div>
       }
-      style={{ height: '370px', overflow: 'scroll', overflowX: 'scroll' }}>
+      style={{ height: '335px', overflow: 'scroll', overflowX: 'scroll' }}>
       <Table align="left" hover >
         <thead align="left">
           <tr>
@@ -92,7 +92,7 @@ const Usb = () => {
           </tr>
         </thead>
         <tbody align="left">
-          {useQue?.map((items, idx) => {
+          {usbQue?.map((items, idx) => {
             return (<tr key={idx}>
               <td>{items.name}</td>
               <td>{items.runningTime}</td>
