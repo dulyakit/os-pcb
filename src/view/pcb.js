@@ -134,7 +134,7 @@ const PCB = () => {
     }
   }
 
-  const updateDataProcess = async () => {
+  const updateProcess = async () => {
     let tempList = processList
     for (let i = 0; i < processList.length; i++) {
       if (processList[i].id) {
@@ -179,8 +179,8 @@ const PCB = () => {
     setProcessList(tempList)  // กำหนดให้ processList เป็บ tempList ที่ถูกปรับปรุงใหม่ในแต่ละรอบ
   }
 
-  useEffect(() => {   // หาก clock มีการเปลี่ยนแปลง จะเรียกใช้ updateDataProcess เพื่อปรับปรุง process
-    updateDataProcess()
+  useEffect(() => {   // หาก clock มีการเปลี่ยนแปลง จะเรียกใช้ updateProcess เพื่อปรับปรุง process
+    updateProcess()
   }, [clock])
 
   useEffect(() => {   // หาก process มีการเปลี่ยนแปลง จะทำการเพิ่ม process ใหม่เข้าไปใน processList
