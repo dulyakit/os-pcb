@@ -9,7 +9,7 @@ import { useSelector } from 'react-redux'
 function Que() {
   const processList = useSelector((state) => state.processList)
   const clock = useSelector((state) => state.clock)
-  
+
   const [queProcess, setQueProcess] = useState([])
 
   // หาก clock มีการเปลี่ยนแปลง จะนำ process ที่มีสถานะเป็น Ready มาจัดเรียงใหม่เพื่อนำไปแสดงผล
@@ -23,7 +23,7 @@ function Que() {
 
     // หน่วงเวลา 1 วินาทีเพื่อรอการแสดงผลของ process
     setTimeout(() => {
-      setQueProcess(temp)
+      setQueProcess(temp.sort(function(a, b){return a.priority - b.priority}))  // เรียง Que ตาม priority
     }, 1000)
   }, [clock])
 

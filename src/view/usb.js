@@ -59,7 +59,7 @@ const Usb = () => {
     }
 
     // นำ array ที่ได้มาจัดเรียงตาม arrivalTime(usb.arrivalTime) จากน้อยไปมาก
-    setUsbQue(_.orderBy(temp, ['arrivalTime'], ['asc']))
+    setUsbQue(temp.sort(function(a, b){return a.arrivalTime - b.arrivalTime}))
   }
 
   // หาก clock มีการเปลี่ยนแปลง จะเรียกใช้ sortUsb เพื่อจัดเรียงคิวตาม arrivalTime ของ usb
