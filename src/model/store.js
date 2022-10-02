@@ -8,6 +8,7 @@ const initialState = {
   usbRunning: '',
   averageWaitting: 0,
   averageTurnaround: 0,
+  starvationTime: 30,
 }
 
 export default initialState

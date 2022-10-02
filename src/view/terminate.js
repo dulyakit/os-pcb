@@ -11,6 +11,7 @@ const Terminate = () => {
   const averageWaitting = useSelector((state) => state.averageWaitting)
   const averageTurnaround = useSelector((state) => state.averageTurnaround)
   const processRunning = useSelector((state) => state.processRunning)
+  const starvationTime = useSelector((state) => state.starvationTime)
 
   return (
     <div >
@@ -42,7 +43,7 @@ const Terminate = () => {
                         <td>{items.name}</td>
                         <td>{items.arrivalTime}</td>
                         <td>{items.priority}</td>
-                        <td>{items.excuteTime}</td>
+                        <td>{items.executeTime}</td>
                         <td>{items.waittingTime}</td>
                         <td>{items.turnAroundTime}</td>
                         <td style={{ backgroundColor: 'pink' }}>Terminate</td>
@@ -60,10 +61,11 @@ const Terminate = () => {
               >
                 <div align="left">
                   <div>Clock : {clock}</div>
-                  <div>CPU process : {processList.map((e) => (e.id === processRunning ? e.name : ''))}</div>
-                  <div>I/O process : {usbRunning}</div>
+                  <div>CPU Process : {processList.map((e) => (e.id === processRunning ? e.name : ''))}</div>
+                  <div>I/O Process : {usbRunning}</div>
                   <div>AVG Waitting : {averageWaitting > 0 ? averageWaitting.toFixed(2) : '0.00'}</div>
                   <div>AVG Turnaround : {averageTurnaround > 0 ? averageTurnaround.toFixed(2) : '0.00'}</div>
+                  <div>Starvation : {starvationTime} second</div>
                 </div>
               </Card>
             </div>
