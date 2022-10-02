@@ -4,6 +4,7 @@
 import React, { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
+import Swal from 'sweetalert2'
 import { Card } from 'antd';
 import { Table } from 'reactstrap';
 
@@ -44,7 +45,7 @@ const PCB = () => {
         runningTime: 0,
         responseTime: 0,
       },
-      excuteTime: 0,
+      executeTime: 0,
       waittingTime: 0,
       statusProcess: 'New'
     })
@@ -53,6 +54,13 @@ const PCB = () => {
   }
 
   const terminateProcess = () => {
+    processRunning === null && Swal.fire({
+      position: 'top-end',
+      icon: 'warning',
+      title: 'no processes running, please add process',
+      showConfirmButton: false,
+      timer: 2000
+    }) 
 
     // ค้นหา Object ที่มีสถานะเป็น Running และเปลี่ยนสถานะเป็น Terminate แล้วนำมาใส่ใน terminateProcesss
     let terminateProcesss = processList.filter((item) => {
@@ -65,8 +73,8 @@ const PCB = () => {
     });
     setProcessList(filterArr);
 
-    // กำหนด turnAroundTime เป็นผลรวมของ excuteTime + waittingTime
-    terminateProcesss[0].turnAroundTime = terminateProcesss[0].excuteTime + terminateProcesss[0].waittingTime;
+    // กำหนด turnAroundTime เป็นผลรวมของ executeTime + waittingTime
+    terminateProcesss[0].turnAroundTime = terminateProcesss[0].executeTime + terminateProcesss[0].waittingTime;
 
     setProcessRunning(null) // กำหนดให้  process ปัจจุบันเป็น null
 
@@ -82,13 +90,13 @@ const PCB = () => {
     }, 1000);
   }, []);
 
-  const setStatusRunning = (data) => {
+  const setStatusRunning = (process) => {
 
     /**
       * ถ้า priority ของ process ตัวปัจจุบันน้อยที่สุด จะเข้าเงื่อนไขนี้ 
       * แต่ถ้าไม่ใช่ จะกำหนดให้ status ของ process ตัวนั้นๆเป็น ready
     */
-    if (data.priority === findNumber('P', processList)) {
+    if (process.priority === findNumber('P', processList)) {
       let temp = []
 
       // นำค่า priority ทั้งหมดมาใส่ใน array temp
@@ -102,35 +110,32 @@ const PCB = () => {
       /**
        * ถ้าขนาดของ Array.from(result) มากกว่า 0 แสดงว่ามีตัวเลขที่ซ้ำกัน ดังนั้นจึงเข้าเงื่อนไขแรก คือการไปหา arrivalTime ที่น้อยที่สุดของ priority ตัวนั้นๆ
        * ถ้าไม่มีค่าซ้ำกัน ก็จะกำหนดให้ priority ตัวนั้นๆเป็น Running ทันที
-       * และในทั้งสองเงื่อนไขจะกำหนด ProcessRunning ให้เป็น id ของ process ตัวนั้นๆ เพื่อนำไปตรวจสอบ non-preemptive และนำไปแสดงผล
+       * และในทั้งสองเงื่อนไขจะกำหนด ProcessRunning ให้เป็น id ของ process ตัวนั้นๆ เพื่อนำไปตรวจสอบว่ามี process ใช้งานอยู่ในรอบถัดไป
       */
       if (Array.from(result).length > 0) {
-        if (data.arrivalTime === findNumber('PA', processList, data.priority)) {
-          data.statusProcess = "Running"
-          setProcessRunning(data.id)
+        if (process.arrivalTime === findNumber('PA', processList, process.priority)) {
+          process.statusProcess = "Running"
+          setProcessRunning(process.id)
         }
       } else {
-        data.statusProcess = "Running"
-        setProcessRunning(data.id)
+        process.statusProcess = "Running"
+        setProcessRunning(process.id)
       }
-
-    } else {
-      data.statusProcess = "Ready"
     }
   }
 
-  const setStatusUsb = (data) => {
+  const setStatusUsb = (process) => {
 
     /** 
      * ถ้า arrivalTime ของ usb ตัวปัจจุบันน้อยที่สุดจะกำหนด statusUsb ของ process นั้นๆให้เป็น Running 
      * ถ้าไม่ จะกำหนด statusUsb ของ process นั้นๆให้เป็น Waiting
     */
-    if (data.usb.arrivalTime === findNumber('UA', processList)) {
-      setUsbCurrent(data.name) // กำหนดให้ usb ตัวปัจจุบันเป็นชื่อของ process ใช้เพื่อแสดงผลเท่านั้น
-      data.usb.statusUsb = "Running"
+    if (process.usb.arrivalTime === findNumber('UA', processList)) {
+      setUsbCurrent(process.name) // กำหนดให้ usb ตัวปัจจุบันเป็นชื่อของ process ใช้เพื่อแสดงผลเท่านั้น
+      process.usb.statusUsb = "Running"
 
     } else {
-      data.usb.statusUsb = "Waiting"
+      process.usb.statusUsb = "Waiting"
     }
   }
 
@@ -153,14 +158,14 @@ const PCB = () => {
           tempList[i].statusProcess = "Waiting"
         }
 
-        if (tempList[i].statusProcess === "Running") {  // หากสถานะของ process นั้นๆเป็น Running จะนับ excuteTime เพิ่มทีละ 1 ตาม clock
-          tempList[i].excuteTime++
+        if (tempList[i].statusProcess === "Running") {  // หากสถานะของ process นั้นๆเป็น Running จะนับ executeTime เพิ่มทีละ 1 ตาม clock
+          tempList[i].executeTime++
 
         } else if (tempList[i].statusProcess === "Ready") {  // หากสถานะของ process นั้นๆเป็น Ready จะนับ waittingTime เพิ่มทีละ 1 ตาม clock
           tempList[i].waittingTime++
 
         } else if (tempList[i].usb.active === true) { // หากสถานะของ process ถูก usb ดึงไปใช้งาน จะนับ waittingTime เพิ่มทีละ 1 ตาม clock
-          tempList[i].excuteTime = tempList[i].excuteTime
+          tempList[i].executeTime = tempList[i].executeTime
           tempList[i].waittingTime++
 
           setStatusUsb(tempList[i])
@@ -214,7 +219,21 @@ const PCB = () => {
                     {' '}
                     <button className='btn btn-danger btn-sm' onClick={() => terminateProcess()}>Terminate</button>
                     {' '}
-                    <button className='btn btn-info btn-sm' onClick={() => window.location.reload()} style={{ marginRight: '5px' }}>Reset</button>
+                    <button className='btn btn-info btn-sm' onClick={() => 
+                      Swal.fire({
+                        title: 'Are you sure?',
+                        text: "Do you want to reset?",
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'Yes'
+                      }).then((result) => {
+                        if (result.isConfirmed) {
+                          window.location.reload()
+                        }
+                      })
+                    } style={{ marginRight: '5px' }}>Reset</button>
                   </div>
                 </div>
               }
@@ -237,7 +256,7 @@ const PCB = () => {
                           <td>{items.name}</td>
                           <td>{items.arrivalTime}</td>
                           <td>{items.priority}</td>
-                          <td>{items.excuteTime}</td>
+                          <td>{items.executeTime}</td>
                           <td>{items.waittingTime}</td>
                           {items.statusProcess === 'New' && (<td>New</td>)}
                           {items.statusProcess === 'Ready' && (<td style={{ backgroundColor: 'yellow' }}>Ready</td>)}
@@ -254,12 +273,12 @@ const PCB = () => {
             <div className="col-md-4">
 
               {/* Que Component  */}
-              <Que />
+              <Que processList={processList} clock={clock} />
               {/* Que Component  */}
 
 
               {/* Usb Component  */}
-              <Usb />
+              <Usb processList={processList} clock={clock}  processRunning={processRunning}/>
               {/* Usb Component  */}
 
             </div>
