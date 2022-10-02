@@ -1,22 +1,32 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect } from 'react'
-import _ from 'lodash'
+
+import Swal from 'sweetalert2'
 import { Card } from 'antd';
 import { Table } from 'reactstrap';
 
-import { useDispatch, useSelector } from 'react-redux'
+import { useDispatch } from 'react-redux'
 
-const Usb = () => {
+const Usb = (props) => {
   const dispatch = useDispatch()
 
-  const clock = useSelector((state) => state.clock)
-  const processList = useSelector((state) => state.processList)
+  const clock = props?.clock
+  const processList = props?.processList
+  const processRunning = props?.processRunning
 
   const setProcessRunning = ((any) => dispatch({ type: 'set', processRunning: any, }))
 
   const [usbQue, setUsbQue] = useState()
 
   const addUsb = () => {
+    processRunning === null && Swal.fire({
+      position: 'top-end',
+      icon: 'warning',
+      title: 'no processes running, please add process',
+      showConfirmButton: false,
+      timer: 2000
+    }) 
+
     let tempList = processList
     for (let i = 0; i < processList.length; i++) {
       if (processList[i].id) {
@@ -33,6 +43,14 @@ const Usb = () => {
   }
 
   const ejectUsb = () => {
+    usbQue.length < 1 && Swal.fire({
+      position: 'top-end',
+      icon: 'warning',
+      title: 'There is no process that the USB is using.',
+      showConfirmButton: false,
+      timer: 2000
+    }) 
+
     let tempList = processList
     for (let i = 0; i < processList.length; i++) {
       if (processList[i].id) {
