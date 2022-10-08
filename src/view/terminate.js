@@ -31,7 +31,7 @@ const Terminate = () => {
                       <th style={{ width: '15%' }}>Process Name</th>
                       <th style={{ width: '10%' }}>Arrival Time</th>
                       <th style={{ width: '10%' }}>Priority</th>
-                      <th style={{ width: '10%' }}>Execute Time</th>
+                      <th style={{ width: '10%' }}>Burst Time</th>
                       <th style={{ width: '10%' }}>Waitting Time</th>
                       <th style={{ width: '13%' }}>Turn around Time</th>
                       <th style={{ width: '13%' }}>Status Process</th>
@@ -43,7 +43,7 @@ const Terminate = () => {
                         <td>{items.name}</td>
                         <td>{items.arrivalTime}</td>
                         <td>{items.priority}</td>
-                        <td>{items.executeTime}</td>
+                        <td>{items.burstTime}</td>
                         <td>{items.waittingTime}</td>
                         <td>{items.turnAroundTime}</td>
                         <td style={{ backgroundColor: 'pink' }}>Terminate</td>
