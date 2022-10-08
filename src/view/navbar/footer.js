@@ -3,7 +3,7 @@ import React from 'react';
 
 const App = () => (
   <PageHeader className="site-page-footer">
-    <div align="center">&copy; 2022 สามสิงฟ์เปิด sing ยาย</div>
+    <div align="center">Developed by Dulyakit Phommachat, CPE.61241 RMUTI. </div>
   </PageHeader>
 );
 
