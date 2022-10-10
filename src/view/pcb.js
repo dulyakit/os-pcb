@@ -45,7 +45,7 @@ const PCB = () => {
         runningTime: 0,
         responseTime: 0,
       },
-      executeTime: 0,
+      burstTime: 0,
       waittingTime: 0,
       statusProcess: 'New'
     })
@@ -73,8 +73,8 @@ const PCB = () => {
     });
     setProcessList(filterArr);
 
-    // กำหนด turnAroundTime เป็นผลรวมของ executeTime + waittingTime
-    terminateProcesss[0].turnAroundTime = terminateProcesss[0].executeTime + terminateProcesss[0].waittingTime;
+    // กำหนด turnAroundTime เป็นผลรวมของ burstTime + waittingTime
+    terminateProcesss[0].turnAroundTime = terminateProcesss[0].burstTime + terminateProcesss[0].waittingTime;
 
     setProcessRunning(null) // กำหนดให้  process ปัจจุบันเป็น null
 
@@ -158,14 +158,14 @@ const PCB = () => {
           tempList[i].statusProcess = "Waiting"
         }
 
-        if (tempList[i].statusProcess === "Running") {  // หากสถานะของ process นั้นๆเป็น Running จะนับ executeTime เพิ่มทีละ 1 ตาม clock
-          tempList[i].executeTime++
+        if (tempList[i].statusProcess === "Running") {  // หากสถานะของ process นั้นๆเป็น Running จะนับ burstTime เพิ่มทีละ 1 ตาม clock
+          tempList[i].burstTime++
 
         } else if (tempList[i].statusProcess === "Ready") {  // หากสถานะของ process นั้นๆเป็น Ready จะนับ waittingTime เพิ่มทีละ 1 ตาม clock
           tempList[i].waittingTime++
 
         } else if (tempList[i].usb.active === true) { // หากสถานะของ process ถูก usb ดึงไปใช้งาน จะนับ waittingTime เพิ่มทีละ 1 ตาม clock
-          tempList[i].executeTime = tempList[i].executeTime
+          tempList[i].burstTime = tempList[i].burstTime
           tempList[i].waittingTime++
 
           setStatusUsb(tempList[i])
@@ -244,7 +244,7 @@ const PCB = () => {
                       <th style={{ width: '15%' }}>Process Name</th>
                       <th style={{ width: '13%' }}>Arrival Time</th>
                       <th style={{ width: '13%' }}>Priority</th>
-                      <th style={{ width: '13%' }}>Execute Time</th>
+                      <th style={{ width: '13%' }}>Burst Time</th>
                       <th style={{ width: '13%' }}>Waitting Time</th>
                       <th style={{ width: '15%' }}>Status Process</th>
                     </tr>
@@ -256,7 +256,7 @@ const PCB = () => {
                           <td>{items.name}</td>
                           <td>{items.arrivalTime}</td>
                           <td>{items.priority}</td>
-                          <td>{items.executeTime}</td>
+                          <td>{items.burstTime}</td>
                           <td>{items.waittingTime}</td>
                           {items.statusProcess === 'New' && (<td>New</td>)}
                           {items.statusProcess === 'Ready' && (<td style={{ backgroundColor: 'yellow' }}>Ready</td>)}
